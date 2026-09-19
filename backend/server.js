@@ -12,7 +12,8 @@ const { GoogleGenAI } = require("@google/genai");
 
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
+
+
 
 require("dotenv").config();
 
@@ -32,18 +33,7 @@ const ai = new GoogleGenAI({
 // RESUME UPLOAD CONFIGURATION
 // ===============================
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
-    },
-
-    filename: (req, file, cb) => {
-        const uniqueName =
-            Date.now() + "-" + file.originalname;
-
-        cb(null, uniqueName);
-    }
-});
+const storage = multer.memoryStorage();
 
 
 const upload = multer({
@@ -78,17 +68,15 @@ const upload = multer({
 // ===============================
 
 const extractTextFromResume = async (
-    filePath,
+    fileBuffer,
     fileExtension
 ) => {
 
     // PDF
     if (fileExtension === ".pdf") {
 
-        const dataBuffer = fs.readFileSync(filePath);
-
         const parser = new PDFParse({
-            data: dataBuffer
+            data: fileBuffer
         });
 
         const result = await parser.getText();
@@ -102,9 +90,10 @@ const extractTextFromResume = async (
     // DOCX
     if (fileExtension === ".docx") {
 
-        const result = await mammoth.extractRawText({
-            path: filePath
-        });
+        const result =
+            await mammoth.extractRawText({
+                buffer: fileBuffer
+            });
 
         return result.value;
     }
@@ -421,7 +410,6 @@ app.post(
 // ===============================
 // RESUME UPLOAD + TEXT EXTRACTION
 // ===============================
-
 app.post(
     "/api/resume/upload",
     authMiddleware,
@@ -445,11 +433,7 @@ app.post(
 
 
             const fileName =
-                req.file.filename;
-
-
-            const filePath =
-                req.file.path;
+                req.file.originalname;
 
 
             const fileExtension =
@@ -462,7 +446,7 @@ app.post(
 
             const extractedText =
                 await extractTextFromResume(
-                    filePath,
+                    req.file.buffer,
                     fileExtension
                 );
 
@@ -543,8 +527,6 @@ app.post(
         }
     }
 );
-
-
 // ===============================
 // GEMINI TEST API
 // ===============================
@@ -871,7 +853,7 @@ IMPORTANT RULES:
    - technologies
    - education
    - job history.
-   
+
 9.1 For contentImprovements:
     - Only suggest improvements based on content actually present in the resume.
     - When possible, provide the original/current resume statement.
@@ -1277,16 +1259,14 @@ app.get(
 // START SERVER
 // ===============================
 
+// START SERVER
 const PORT = 5000;
 
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server started on PORT : ${PORT}`);
+    });
+}
 
-app.listen(
-    PORT,
-
-    () => {
-
-        console.log(
-            `Server running on port ${PORT}`
-        );
-    }
-);
+// Export app for Vercel
+module.exports = app;
