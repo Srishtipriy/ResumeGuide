@@ -108,11 +108,18 @@ const extractTextFromResume = async (
 // ===============================
 // MIDDLEWARE
 // ===============================
+app.use(
+    cors({
+        origin: [
+            "http://localhost:5173",
+            "https://resume-guide-mgj6.vercel.app"
+        ],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
 
-app.use(cors());
 app.use(express.json());
-
-
 // ===============================
 // MYSQL CONNECTION
 // ===============================
