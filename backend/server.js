@@ -119,7 +119,35 @@ app.use(
     })
 );
 
-app.options("/{*splat}", cors());
+// Handle CORS preflight requests
+app.use((req, res, next) => {
+
+    if (req.method === "OPTIONS") {
+
+        const origin = req.headers.origin;
+
+        if (
+            origin === "http://localhost:5173" ||
+            origin === "https://resume-guide-mgj6.vercel.app"
+        ) {
+            res.setHeader("Access-Control-Allow-Origin", origin);
+        }
+
+        res.setHeader(
+            "Access-Control-Allow-Methods",
+            "GET, POST, PUT, DELETE, OPTIONS"
+        );
+
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            "Content-Type, Authorization"
+        );
+
+        return res.status(204).end();
+    }
+
+    next();
+});
 
 app.use(express.json());
 // ===============================
