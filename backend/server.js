@@ -164,11 +164,10 @@ const db = mysql.createPool({
     ssl: {
         rejectUnauthorized: false
     },
-
-    waitForConnections: true,
-    connectionLimit: 5,
-    queueLimit: 0,
-    connectTimeout: 20000
+waitForConnections: true,
+connectionLimit: 2,
+queueLimit: 0,
+connectTimeout: 30000
 });
 
 // ===============================
