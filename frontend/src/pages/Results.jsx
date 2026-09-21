@@ -57,7 +57,8 @@ function Results() {
         const token = localStorage.getItem("token");
 
         const response = await axios.get(
-          `http://localhost:5000/api/analysis/${id}`,
+          
+            `${import.meta.env.VITE_API_URL}/api/analysis/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -48,7 +48,7 @@ function UploadResume() {
       formData.append("resume", file);
 
       const uploadResponse = await axios.post(
-        "http://localhost:5000/api/resume/upload",
+        `${import.meta.env.VITE_API_URL}/api/resume/upload`,
         formData,
         {
           headers: {
@@ -75,7 +75,7 @@ function UploadResume() {
       // -----------------------------
 
       const analysisResponse = await axios.post(
-        "http://localhost:5000/api/resume/analyze",
+        `${import.meta.env.VITE_API_URL}/api/resume/analyze`,
         {
           resumeId: resumeId,
           jobRole: jobRole || null,

@@ -26,7 +26,7 @@ const handleDelete = async (analysisId) => {
     const token = localStorage.getItem("token");
 
     await axios.delete(
-      `http://localhost:5000/api/analysis/${analysisId}`,
+      `${import.meta.env.VITE_API_URL}/api/analysis/${analysisId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ const handleDelete = async (analysisId) => {
         const token = localStorage.getItem("token");
 
         const response = await axios.get(
-          "http://localhost:5000/api/analysis/history",
+          `${import.meta.env.VITE_API_URL}/api/analysis/history`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
