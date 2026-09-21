@@ -4,6 +4,7 @@ const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("./middleware/authMiddleware");
+require("pdf-parse/worker");
 const { PDFParse } = require("pdf-parse");
 const mammoth = require("mammoth");
 const { GoogleGenAI } = require("@google/genai");
