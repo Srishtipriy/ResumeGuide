@@ -154,7 +154,7 @@ app.use(express.json());
 // MYSQL CONNECTION
 // ===============================
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -165,23 +165,22 @@ const db = mysql.createConnection({
         rejectUnauthorized: false
     },
 
+    waitForConnections: true,
+    connectionLimit: 5,
+    queueLimit: 0,
     connectTimeout: 20000
 });
-
 
 // ===============================
 // CONNECT TO MYSQL
 // ===============================
 
-db.connect((err) => {
-
+db.query("SELECT 1", (err) => {
     if (err) {
-
         console.log(
             "MySQL connection failed:",
             err.message
         );
-
         return;
     }
 
