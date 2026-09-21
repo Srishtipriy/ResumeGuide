@@ -112,7 +112,7 @@ app.use(
     cors({
         origin: [
             "http://localhost:5173",
-            "https://resume-guide-mgj6.vercel.app"
+            "https://resume-guide-roan.vercel.app"
         ],
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
@@ -128,7 +128,7 @@ app.use((req, res, next) => {
 
         if (
             origin === "http://localhost:5173" ||
-            origin === "https://resume-guide-mgj6.vercel.app"
+            origin === "https://resume-guide-roan.vercel.app"
         ) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }
