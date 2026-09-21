@@ -119,6 +119,8 @@ app.use(
     })
 );
 
+app.options("/{*splat}", cors());
+
 app.use(express.json());
 // ===============================
 // MYSQL CONNECTION
