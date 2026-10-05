@@ -50,6 +50,63 @@ function Dashboard() {
 
   const bestScore =
     scores.length > 0 ? Math.max(...scores) : 0;
+        
+
+      const handleViewResume = async (resumeId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/resume/${resumeId}/file`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const fileURL = URL.createObjectURL(response.data);
+
+      window.open(fileURL, "_blank");
+    } catch (error) {
+      console.error("Could not open resume:", error);
+      alert("Could not open resume.");
+    }
+  };
+
+
+
+    const handleDownloadResume = async (resumeId, fileName) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/resume/${resumeId}/file`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const fileURL = URL.createObjectURL(response.data);
+
+      const link = document.createElement("a");
+      link.href = fileURL;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      URL.revokeObjectURL(fileURL);
+    } catch (error) {
+      console.error("Could not download resume:", error);
+      alert("Could not download resume.");
+    }
+  };
+
 
   return (
     <div className="app">
@@ -263,7 +320,7 @@ function Dashboard() {
                             <div className="dashboard-recent-info">
 
                               <h3>
-                                Resume.pdf
+                                {item.file_name || "Resume.pdf"}
                               </h3>
 
                               <span>
@@ -308,11 +365,34 @@ function Dashboard() {
 
 
                           <Link
-                            to={`/results/${item.id}`}
-                            className="dashboard-view-btn"
-                          >
-                            View Analysis →
-                          </Link>
+                                to={`/results/${item.id}`}
+                                className="dashboard-view-btn"
+                              >
+                                View Analysis →
+                              </Link>
+
+                              <div className="resume-action-buttons">
+
+                                <button
+                                  className="resume-secondary-btn"
+                                  onClick={() => handleViewResume(item.resume_id)}
+                                >
+                                  View PDF
+                                </button>
+
+                                <button
+                                  className="resume-secondary-btn"
+                                  onClick={() =>
+                                    handleDownloadResume(
+                                      item.resume_id,
+                                      item.file_name
+                                    )
+                                  }
+                                >
+                                  Download
+                                </button>
+
+                              </div>
 
                         </div>
 

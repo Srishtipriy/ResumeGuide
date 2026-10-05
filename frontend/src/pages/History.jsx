@@ -172,7 +172,7 @@ const handleDelete = async (analysisId) => {
                         <div className="history-file-info">
 
                           <h3>
-                            Resume.pdf
+                            {item.file_name || "Resume.pdf"}
                           </h3>
 
                           <span>

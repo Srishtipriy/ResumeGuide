@@ -2316,6 +2316,37 @@ color: #8fb5ff;
   padding-top: 4px;
 }
 
+/* Resume PDF Actions */
+
+.resume-action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.resume-secondary-btn {
+  flex: 1;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resume-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.resume-secondary-btn:focus {
+  outline: none;
+}
+
 /* =========================================
    RESPONSIVE
    ========================================= */

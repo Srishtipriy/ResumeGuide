@@ -178,7 +178,7 @@ db.query("SELECT 1", (err) => {
     if (err) {
         console.log(
             "MySQL connection failed:",
-            err.message
+            err
         );
         return;
     }
@@ -501,13 +501,13 @@ app.post(
                 });
             }
 
-
+            
             const sql = `
                 INSERT INTO resumes
-                (user_id, file_name, extracted_text)
-                VALUES (?, ?, ?)
+                (user_id, file_name, extracted_text, file_data)
+                VALUES (?, ?, ?, ?)
             `;
-
+            console.log("FILE BUFFER SIZE:", req.file.buffer.length);
 
             db.query(
 
@@ -516,7 +516,8 @@ app.post(
                 [
                     userId,
                     fileName,
-                    extractedText
+                    extractedText,
+                    req.file.buffer
                 ],
 
                 (err, result) => {
@@ -1119,7 +1120,71 @@ IMPORTANT RULES:
 
 );
 
-// Get analysis history for logged-in user
+// View / Download Resume PDF
+app.get(
+    "/api/resume/:id/file",
+    authMiddleware,
+    (req, res) => {
+        const resumeId = req.params.id;
+        const userId = req.user.id;
+
+        const sql = `
+            SELECT file_name, file_data
+            FROM resumes
+            WHERE id = ? AND user_id = ?
+        `;
+
+        db.query(
+            sql,
+            [resumeId, userId],
+            (err, results) => {
+                if (err) {
+                    console.log("Resume file fetch error:", err);
+                    return res.status(500).json({
+                        message: "Failed to fetch resume"
+                    });
+                }
+
+                if (results.length === 0) {
+                    return res.status(404).json({
+                        message: "Resume not found"
+                    });
+                }
+
+                const file = results[0];
+
+                if (!file.file_data) {
+                    return res.status(404).json({
+                        message: "Resume file not available"
+                    });
+                }
+
+                const fileName = file.file_name.toLowerCase();
+
+                let contentType = "application/octet-stream";
+
+                if (fileName.endsWith(".pdf")) {
+                    contentType = "application/pdf";
+                } else if (fileName.endsWith(".docx")) {
+                    contentType =
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                }
+
+                res.setHeader("Content-Type", contentType);
+                res.setHeader(
+                    "Content-Disposition",
+                    `inline; filename="${file.file_name}"`
+                );
+
+                res.send(file.file_data);
+            }
+        );
+    }
+);
+
+
+
+// Get analysis history for logged-in user//--------------------------------------------------------------
 app.get(
     "/api/analysis/history",
     authMiddleware,
